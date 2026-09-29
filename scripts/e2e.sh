@@ -8,5 +8,5 @@ cd "$(dirname "$0")/.."
 IMAGE="mcr.microsoft.com/playwright:v1.61.0-noble"
 exec docker run --rm --init --ipc=host \
   -v "$PWD":/work -w /work \
-  -e CI="${CI:-}" \
+  -e CI="${CI:-}" -e E2E_BASE_URL="${E2E_BASE_URL:-}" \
   "$IMAGE" npx playwright test "$@"
