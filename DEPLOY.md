@@ -9,16 +9,18 @@ wildcard certificate.
 
 ```
 sudo -v \
-  && sudo git clone git@github.com:maksimfrelikh/quietkit.git /var/www/quietkit \
-  && sudo chown -R $USER:$USER /var/www/quietkit \
+  && sudo mkdir -p /var/www/quietkit && sudo chown $USER:$USER /var/www/quietkit \
+  && git clone git@github.com:maksimfrelikh/quietkit.git /var/www/quietkit \
   && cd /var/www/quietkit && npm ci && npm run build \
   && sudo cp deploy/nginx.conf /etc/nginx/sites-available/quietkit \
   && sudo ln -sf /etc/nginx/sites-available/quietkit /etc/nginx/sites-enabled/quietkit \
   && sudo nginx -t && sudo systemctl reload nginx
 ```
 
-`npm ci` fetches `stark-ui-kit` over `git+ssh`: run this in an interactive session where the
-TPM SSH agent is available (or export `SSH_AUTH_SOCK=/run/user/1000/ssh-tpm-agent.sock`).
+Only `mkdir`/`chown` and the nginx steps run as root: the clone and `npm ci` must run as
+your user, because root has no SSH key (`sudo git clone` fails with "Permission denied
+(publickey)" — seen 2026-09-29). `npm ci` fetches `stark-ui-kit` over `git+ssh`: run this in
+an interactive session where the TPM SSH agent is available (or export `SSH_AUTH_SOCK=/run/user/1000/ssh-tpm-agent.sock`).
 
 ## Updating a running deploy
 
