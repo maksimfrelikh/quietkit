@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "csp": "node scripts/check-csp.mjs",
     "verify": "npm run check && npm run lint && npm run test && npm run build:nocheck && npm run csp",
-    "e2e": "scripts/e2e.sh"
+    "e2e": "scripts/e2e.sh",
+    "e2e:update": "scripts/e2e.sh --update-snapshots"
   },
   "dependencies": {
     "@astrojs/svelte": "^8.1.2",

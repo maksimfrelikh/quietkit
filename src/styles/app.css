@@ -29,6 +29,10 @@
   --field-pad: 0.75rem;
   --field-r: var(--r-sm);
   --tool-gap: clamp(12px, 2vw, 20px);
+
+  /* A wash: the foreground at low opacity, so it follows the theme by construction.
+     --faint is a TEXT/line grey in the kit, not a surface — a pre on it is unreadable. */
+  --wash: color-mix(in srgb, var(--fg) 6%, transparent);
 }
 [data-theme="dark"] { --theme-toggle-flip: 0deg; }
 @media (prefers-color-scheme: dark) {
@@ -93,7 +97,7 @@ main { padding-block: var(--tool-gap) var(--section-pad); }
   background: var(--fg); color: var(--bg); border-radius: var(--r-xs);
   padding-inline: 0.1em; font-weight: 500;
 }
-.field-out mark.was { background: var(--faint); color: var(--fg); }
+.field-out mark.was { background: var(--wash); color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-2); }
 .field-out.short { min-height: 4rem; }
 .field.single { min-height: 2.75rem; resize: none; }
 .opt.grow { flex: 1 1 18rem; }
@@ -152,12 +156,20 @@ fieldset.opt { border: 0; padding: 0; margin: 0; }
 .kv th { font-family: var(--label-font); font-weight: var(--label-weight); font-size: var(--t-meta); letter-spacing: var(--label-track); text-transform: var(--label-case); color: var(--muted); white-space: nowrap; width: 1%; padding-inline-end: 1.25rem; }
 .kv td { overflow-wrap: anywhere; }
 .kv td .pill.small { margin-inline-start: 0.5rem; vertical-align: middle; }
+/* Phone: label above value, one row per entry. */
+@media (max-width: 680px) {
+  .kv, .kv tbody, .kv tr, .kv th, .kv td { display: block; width: auto; }
+  .kv th { border-bottom: 0; padding-bottom: 0.15rem; }
+  .kv td { padding-top: 0; }
+}
 
 /* Text part below the tool. */
 .tool-doc { margin-block-start: var(--section-pad); max-width: var(--measure, 36.672rem); }
 .tool-doc h2 { font-size: var(--t-h3); margin-block: 2em 0.6em; }
-.tool-doc pre { font-family: var(--font-mono); font-size: var(--t-meta); background: var(--faint); border-radius: var(--field-r); padding: var(--field-pad); overflow: auto; }
+.tool-doc pre { font-family: var(--font-mono); font-size: var(--t-meta); background: var(--wash); border-radius: var(--field-r); padding: var(--field-pad); overflow: auto; }
 .related { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
+.prose .related li { padding: 0; }
+.prose .related li::before { content: none; }
 
 /* Home list. */
 .tool-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }

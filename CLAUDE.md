@@ -46,9 +46,27 @@ CSP; use `npm run build:nocheck && npm run preview` to test it.
 ## Gates
 
 ```
-npm run verify   # astro check → eslint → vitest → build → check-csp
-npm run e2e      # Playwright in Docker (chromium, firefox, webkit, iPhone) against `astro preview`
+npm run verify       # astro check → eslint → vitest → build → check-csp
+npm run e2e          # Playwright in Docker: builds, then serves dist/ with `astro preview`
+npm run e2e:update   # same, rewriting the snapshots — read the diff first
 ```
+
+Three Playwright suites, one Docker image (`scripts/e2e.sh`), all building `dist/` first
+(the preview server serves the last build; before 2026-09-29 the config skipped the build and
+the gate stayed green through a real change):
+
+- `e2e/tools.spec.ts` — behaviour, in chromium / firefox / webkit / iPhone; fails on any
+  console error.
+- `e2e/gate.spec.ts` — **values** (SPEC § 2.19): every custom property with its computed value
+  per theme and contrast mode, the computed geometry of the tool-page components, and the two
+  transition states a screenshot never sees (transitions zeroed during a theme switch, the
+  tap highlight being ours). Chromium only; the values are browser-independent.
+- `e2e/visual.spec.ts` — **pixels**, desktop 1280×900 and iPhone 13, light and dark, with the
+  sticky header masked in full-page shots and covered by its own shot. `maxDiffPixels: 0`.
+
+Baselines are committed under `e2e/__snapshots__/`. The gate was proven to go red on a
+0.05rem change of `--field-pad` (tokens, geometry and 8 page shots) before its first commit;
+prove it again the same way if you ever doubt it.
 
 `e2e` runs inside `mcr.microsoft.com/playwright:v1.61.0-noble` (`scripts/e2e.sh`) so the
 rendering is identical on the Mac and on laptop-server; frelikh's host-rendered screenshot
@@ -56,8 +74,7 @@ baselines only pass on the machine that made them, and this project must not rep
 `E2E_BASE_URL=https://quietkit.frelikh.dev npm run e2e` runs the same tests against the live
 site (no local server) — do it after every deploy; it is the production check of hydration
 and CSP. Docker must be running. Port **4330** for dev/preview/e2e: 4321 is the live frelikh service
-on laptop-server. There is no screenshot/token/geometry gate yet (SPEC § 2.19); it goes in
-before the first shell component.
+on laptop-server.
 
 ## Theme
 
