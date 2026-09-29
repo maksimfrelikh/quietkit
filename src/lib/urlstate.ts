@@ -14,13 +14,21 @@ export function readOptions<T extends Record<string, string>>(defaults: T): T {
   return out;
 }
 
+/* The seed is captured once per page (MPA: one page, one tool) so that the order in which
+   a tool's mount hooks and URL-writing effects run cannot lose it — writeOptions strips
+   ?input= from the address bar, and it does so after capturing. */
+let seed: string | null | undefined;
+
 export function readInput(): string | null {
+  if (seed !== undefined) return seed;
   if (typeof location === 'undefined') return null;
-  return new URLSearchParams(location.search).get('input');
+  seed = new URLSearchParams(location.search).get('input');
+  return seed;
 }
 
 export function writeOptions<T extends Record<string, string>>(options: T, defaults: T): void {
   if (typeof history === 'undefined') return;
+  readInput();
   const q = new URLSearchParams(location.search);
   for (const key of Object.keys(defaults)) {
     if (options[key] === defaults[key]) q.delete(key);

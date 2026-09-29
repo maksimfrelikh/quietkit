@@ -8,11 +8,16 @@ only what you need to work here without re-deriving it. Keep both true when the 
 
 - Astro 6 in **static** output, Svelte 5 islands, **npm** (not pnpm — the kit's `prepare`
   build needs it; see SPEC § 2.1), `stark-ui-kit` pinned by sha in `package.json`.
-- Three tools, deliberately without a shared shell (SPEC § 3.1 step 2): `src/tools/url-encode`,
-  `src/tools/timestamp`, `src/tools/nbsp`. Each is `engine.ts` (pure TS) + `engine.test.ts` +
-  `Tool.svelte` + a page in `src/pages/tools/`. The duplication between them is the material
-  the shell will be lifted from; do not unify them ahead of that.
-- No shell, no manifest, no registry, no scaffold yet. The home page lists tools by hand in
+- Three tools: `src/tools/url-encode`, `src/tools/timestamp`, `src/tools/nbsp`. Each is
+  `engine.ts` (pure TS) + `engine.test.ts` + `Tool.svelte` + a page in `src/pages/tools/`.
+- **The shell** (`src/ui/shell/`, SPEC § 2.8) was lifted from those three after they were
+  written without one, and the refactor onto it was pixel-identical under the visual gate.
+  It is only what all three needed: `Tool` (grid + status line via context), `Options`, `IO`,
+  `Pane`/`PaneHead`, `PillButton`, `CopyButton`, `TextInput` (autofocus, Example, Clear),
+  `TextOutput`, `KeyValue`, `Segmented`, `SelectOption`, `Checkbox`, and `urlOptions` /
+  `seededInput` for state ⇄ URL. Rule: something two tools need stays in the tools;
+  three, and it moves here. No `if (toolId …)` in the shell, ever.
+- No manifest, no registry, no scaffold yet. The home page lists tools by hand in
   `src/pages/index.astro`; that is temporary and known.
 
 ## Rules that are enforced
@@ -89,8 +94,9 @@ toggle; picking what the OS shows anyway removes the key.
 src/layouts/Base.astro       head, kit CSS imports, theme bootstrap, header/footer
 src/components/ToolPage.astro  frame of a tool page: h1, badge, island slot, doc slot, related
 src/styles/app.css           the app layer over the kit; shared .tool-* classes
-src/lib/urlstate.ts          options ⇄ URL, ?input= read-only
-src/tools/<id>/              engine.ts, engine.test.ts, Tool.svelte
+src/lib/urlstate.ts          options ⇄ URL, ?input= read-only (seed captured once per page)
+src/ui/shell/                the tool shell; index.ts is the import surface
+src/tools/<id>/              engine.ts, engine.test.ts, Tool.svelte (on the shell)
 src/pages/tools/<id>.astro   page = ToolPage + island + prose text (description, examples, FAQ)
 e2e/                         Playwright smoke tests; playwright.config.ts; scripts/e2e.sh
 deploy/nginx.conf            the site block; DEPLOY.md is the chain

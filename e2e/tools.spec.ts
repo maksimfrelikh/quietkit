@@ -55,9 +55,26 @@ test('timestamp: detects the unit and renders the table', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+const placeholderShown = (page: Page) => page.evaluate(() => {
+  const el = document.querySelector('.field-out')!;
+  return getComputedStyle(el, '::before').content !== 'none' && el.textContent === '';
+});
+
+for (const [tz, iso] of [['Asia/Tokyo', '2026-09-29T21:00:00+09:00'], ['UTC', '2026-09-29T12:00:00Z']]) {
+  test(`timestamp: a ?tz=${tz} deep link selects that zone on first render`, async ({ page }) => {
+    await page.goto(`/tools/timestamp?tz=${tz}&input=1790683200`);
+    const select = page.getByLabel('Time zone');
+    await expect(select).toHaveValue(tz);
+    // The visible text too: a value with no matching <option> renders as a blank control.
+    expect(await select.evaluate((el) => (el as HTMLSelectElement).selectedOptions[0]?.text)).toBe(tz);
+    await expect(page.getByRole('row', { name: new RegExp(`ISO 8601 in ${tz.replace('/', '\\/')}`) })).toContainText(iso);
+  });
+}
+
 test('nbsp: highlights added spaces, entity mode, copy text is real', async ({ page }) => {
   const errors = await consoleErrors(page);
   await page.goto('/tools/nbsp');
+  expect(await placeholderShown(page)).toBe(true);
   await page.getByLabel('Input').fill('Мы пошли в лес и нашли 5 кг грибов');
   await expect(page.locator('.field-out mark')).toHaveCount(3);
   await expect(page.locator('.field-out')).toHaveText('Мы пошли в лес и нашли 5 кг грибов');
@@ -65,6 +82,9 @@ test('nbsp: highlights added spaces, entity mode, copy text is real', async ({ p
   await page.getByRole('group', { name: 'Output' }).getByText('&nbsp;').click();
   await expect(page.locator('.field-out')).toContainText('в&nbsp;лес');
   await expect(page).toHaveURL(/\?out=entity$/);
+  await page.getByLabel('Glue the last two words').check();
+  await expect(page).toHaveURL(/out=entity&last=1$/);
+  await expect(page.locator('.field-out mark')).toHaveCount(4);
   expect(errors).toEqual([]);
 });
 
