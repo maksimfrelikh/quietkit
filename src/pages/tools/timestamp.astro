@@ -1,0 +1,23 @@
+---
+import ToolPage from '~/components/ToolPage.astro';
+import Tool from '~/tools/timestamp/Tool.svelte';
+---
+<ToolPage
+  title="Timestamp converter"
+  description="Turn a Unix timestamp in seconds, milliseconds, micro- or nanoseconds into ISO 8601, RFC 2822, local time and a relative date. Or paste a date and get the timestamp."
+  related={[{ href: '/tools/url-encode', label: 'URL encode / decode' }, { href: '/tools/nbsp', label: 'Non-breaking spaces' }]}
+>
+  <Tool client:load />
+  <Fragment slot="doc">
+    <h2>How the unit is detected</h2>
+    <p>By the size of the number. Anything under 10<sup>11</sup> is read as seconds (that already reaches the year 5138), under 10<sup>14</sup> as milliseconds, under 10<sup>17</sup> as microseconds, and larger as nanoseconds. Override it when a value happens to sit on the wrong side of a boundary.</p>
+    <h2>Examples</h2>
+    <pre>1790683200           → 2026-09-29T12:00:00.000Z   (seconds)
+1790683200000        → 2026-09-29T12:00:00.000Z   (milliseconds)
+2026-09-29T12:00:00Z → 1790683200                 (Unix seconds)</pre>
+    <h2>Which time zone is “local”?</h2>
+    <p>The one your browser reports. Pick another from the list to see the same instant elsewhere; the choice is kept in the URL so the link can be shared.</p>
+    <h2>Why does the relative time change?</h2>
+    <p>It is computed against the current moment and ticks once a second. The timestamp itself is what you typed and never moves, so a shared link shows the same value to everyone.</p>
+  </Fragment>
+</ToolPage>

@@ -1,0 +1,173 @@
+/* ============================================================
+   quietkit — app layer on top of stark-ui-kit.
+   Rules: no colours, no px spacing, no font sizes in tool components; everything
+   below is tokens from the kit or geometry derived from them. The kit owns the
+   reset, the palette (theme-mono.css) and the type scale.
+   ============================================================ */
+
+/* Metric-matched fallback for Archivo (values computed with Capsize, see frelikh):
+   the local sans occupies the same space while the web font loads, so the swap
+   causes no reflow. Code, not a token — the same block lives in frelikh. */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Roboto");
+  font-weight: 100 900;
+  size-adjust: 98.7%;
+  ascent-override: 88.96%;
+  descent-override: 21.28%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --brand-font-grotesk: "Archivo Variable", "Archivo Fallback", system-ui, sans-serif;
+  --brand-font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* The kit's theme toggle flips wherever LIGHT is active. Light is :root here. */
+  --theme-toggle-flip: 180deg;
+
+  /* Geometry shared by tool fields; derived, not invented. */
+  --field-pad: 0.75rem;
+  --field-r: var(--r-sm);
+  --tool-gap: clamp(12px, 2vw, 20px);
+}
+[data-theme="dark"] { --theme-toggle-flip: 0deg; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --theme-toggle-flip: 0deg; }
+}
+
+html { scroll-padding-top: 72px; }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: var(--z-nav);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .wrap {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--tool-gap);
+  min-height: 56px;
+}
+.brand {
+  font-family: var(--font-mono); font-weight: 500; font-size: var(--t-body);
+  color: var(--fg); text-decoration: none; letter-spacing: 0.01em;
+}
+.brand:focus-visible { outline-offset: 4px; }
+.site-header nav { display: flex; align-items: center; gap: 0.75rem; }
+
+/* ---------- Page ---------- */
+main { padding-block: var(--tool-gap) var(--section-pad); }
+.page-head { margin-block-end: var(--tool-gap); }
+.page-head h1 { font-size: var(--t-h2); margin: 0 0 0.25em; line-height: 1.2; }
+.page-head p { margin: 0; color: var(--muted); }
+
+/* ---------- Tool: split I/O ----------
+   Duplicated per tool on purpose for the first three tools (docs/SPEC.md § 3.1 step 3);
+   the classes are shared so the shell can be lifted from them later. */
+.tool { display: grid; gap: var(--tool-gap); }
+.tool-io { display: grid; gap: var(--tool-gap); grid-template-columns: 1fr; }
+@media (min-width: 900px) { .tool-io { grid-template-columns: 1fr 1fr; } }
+.tool-pane { display: grid; gap: 0.5rem; align-content: start; min-width: 0; }
+.tool-pane-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+  font-family: var(--label-font); font-size: var(--t-meta); letter-spacing: var(--label-track);
+  text-transform: var(--label-case); color: var(--muted); min-height: 2rem;
+}
+.tool-pane-head .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.field, .field-out {
+  width: 100%; min-height: 12rem; resize: vertical;
+  font-family: var(--font-mono); font-size: var(--t-body); line-height: 1.5;
+  color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line-2); border-radius: var(--field-r);
+  padding: var(--field-pad);
+  tab-size: 2;
+}
+.field:focus-visible { outline: 2px solid var(--fg); outline-offset: -1px; border-color: var(--fg); }
+.field::placeholder { color: var(--muted); }
+.field-out {
+  white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto;
+  border-style: dashed;
+}
+.field-out:empty::before { content: attr(data-empty); color: var(--muted); }
+.field-out mark {
+  background: var(--fg); color: var(--bg); border-radius: var(--r-xs);
+  padding-inline: 0.1em; font-weight: 500;
+}
+.field-out mark.was { background: var(--faint); color: var(--fg); }
+.field-out.short { min-height: 4rem; }
+.field.single { min-height: 2.75rem; resize: none; }
+.opt.grow { flex: 1 1 18rem; }
+.check.opt { align-self: end; }
+.check .plain { text-transform: none; letter-spacing: 0; color: var(--fg); font-family: inherit; }
+.field.is-invalid { border-color: var(--fg); border-style: double; }
+
+.tool-options {
+  display: flex; flex-wrap: wrap; gap: var(--tool-gap); align-items: end;
+}
+.opt { display: grid; gap: 0.35rem; }
+.opt > span, .opt legend {
+  font-family: var(--label-font); font-size: var(--t-meta); letter-spacing: var(--label-track);
+  text-transform: var(--label-case); color: var(--muted);
+}
+.opt select, .opt input[type="text"], .opt input[type="number"] {
+  font: inherit; font-family: var(--font-mono); color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line-2); border-radius: var(--field-r); padding: 0.45rem 0.6rem;
+  min-height: 2.5rem;
+}
+.opt select:focus-visible, .opt input:focus-visible { outline: 2px solid var(--fg); outline-offset: -1px; }
+fieldset.opt { border: 0; padding: 0; margin: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-pill); overflow: hidden; }
+.seg label {
+  padding: 0.45rem 0.9rem; cursor: pointer; font-family: var(--label-font); font-size: var(--t-meta);
+  letter-spacing: var(--label-track); text-transform: var(--label-case); color: var(--muted);
+  min-height: 2.5rem; display: inline-flex; align-items: center;
+}
+.seg label:has(input:checked) { background: var(--ink); color: var(--ink-fg); }
+.seg label:has(input:focus-visible) { outline: 2px solid var(--fg); outline-offset: -2px; }
+.seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+.check { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.5rem; cursor: pointer; }
+.check input { width: 1.1rem; height: 1.1rem; accent-color: var(--fg); }
+
+.pill.small { padding: 0.35rem 0.75rem; }
+.pill[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+
+.status {
+  font-family: var(--label-font); font-size: var(--t-meta); color: var(--muted);
+  min-height: 1.5em;
+}
+.status.is-error { color: var(--fg); }
+
+/* Privacy badge: the same on every tool page. */
+.badge {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  font-family: var(--label-font); font-size: var(--t-meta); letter-spacing: var(--label-track);
+  text-transform: var(--label-case); color: var(--muted);
+  border: 1px solid var(--line); border-radius: var(--r-pill); padding: 0.3rem 0.7rem;
+}
+.badge::before { content: ""; width: 0.5em; height: 0.5em; border-radius: var(--r-circle); background: var(--fg); }
+
+/* Result table (timestamp). */
+.kv { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--t-body); }
+.kv th, .kv td { text-align: left; padding: 0.5rem 0.5rem 0.5rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.kv th { font-family: var(--label-font); font-weight: var(--label-weight); font-size: var(--t-meta); letter-spacing: var(--label-track); text-transform: var(--label-case); color: var(--muted); white-space: nowrap; width: 1%; padding-inline-end: 1.25rem; }
+.kv td { overflow-wrap: anywhere; }
+.kv td .pill.small { margin-inline-start: 0.5rem; vertical-align: middle; }
+
+/* Text part below the tool. */
+.tool-doc { margin-block-start: var(--section-pad); max-width: var(--measure, 36.672rem); }
+.tool-doc h2 { font-size: var(--t-h3); margin-block: 2em 0.6em; }
+.tool-doc pre { font-family: var(--font-mono); font-size: var(--t-meta); background: var(--faint); border-radius: var(--field-r); padding: var(--field-pad); overflow: auto; }
+.related { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
+
+/* Home list. */
+.tool-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.tool-list li { border-bottom: 1px solid var(--line); }
+.tool-list a { display: grid; gap: 0.2rem; padding: 1rem 0; color: inherit; text-decoration: none; }
+.tool-list a:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+@media (hover: hover) { .tool-list a:hover .tool-list-title { text-decoration: underline; } }
+.tool-list-title { font-weight: var(--w-strong); }
+.tool-list-desc { color: var(--muted); }
+
+.site-footer { border-top: 1px solid var(--line); padding-block: var(--tool-gap); color: var(--muted); font-size: var(--t-meta); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+.site-footer a { color: inherit; }

@@ -1,0 +1,30 @@
+---
+/* The static frame of a tool page: heading, privacy badge, the island slot, the text part
+   and related tools. The registry will feed this later; for the first tools it is props. */
+import Base from '~/layouts/Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  related?: { href: string; label: string }[];
+}
+const { title, description, related = [] } = Astro.props;
+---
+<Base title={title} description={description}>
+  <div class="page-head">
+    <h1>{title}</h1>
+    <p>{description} <span class="badge" title="This tool has no server side. Turn off the network and it still works.">Runs locally</span></p>
+  </div>
+  <slot />
+  <section class="tool-doc prose">
+    <slot name="doc" />
+    {related.length > 0 && (
+      <>
+        <h2>Related tools</h2>
+        <ul class="related">
+          {related.map((r) => <li><a class="pill" href={r.href}>{r.label}</a></li>)}
+        </ul>
+      </>
+    )}
+  </section>
+</Base>

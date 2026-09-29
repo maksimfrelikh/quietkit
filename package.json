@@ -1,0 +1,44 @@
+{
+  "name": "quietkit",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "quietkit \u2014 developer tools that run in your browser.",
+  "scripts": {
+    "dev": "astro dev --port 4330",
+    "build": "astro check && astro build",
+    "build:nocheck": "astro build",
+    "preview": "astro preview --port 4330",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "csp": "node scripts/check-csp.mjs",
+    "verify": "npm run check && npm run lint && npm run test && npm run build:nocheck && npm run csp",
+    "e2e": "scripts/e2e.sh"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^8.1.2",
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@fontsource/ibm-plex-mono": "5.2.7",
+    "astro": "6.4.2",
+    "stark-ui-kit": "github:maksimfrelikh/stark-ui-kit#eb52f41",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.9",
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^25.9.1",
+    "eslint": "^9.17.0",
+    "eslint-plugin-astro": "^1.3.0",
+    "eslint-plugin-svelte": "^3.0.0",
+    "globals": "^15.14.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.19.0",
+    "vitest": "^5.0.0",
+    "@playwright/test": "1.61.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

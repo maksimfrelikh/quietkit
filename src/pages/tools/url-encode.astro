@@ -1,0 +1,27 @@
+---
+import ToolPage from '~/components/ToolPage.astro';
+import Tool from '~/tools/url-encode/Tool.svelte';
+---
+<ToolPage
+  title="URL encode / decode"
+  description="Percent-encode text for a URL, or decode it back. All three encodings side by side, plus a query-string parser."
+  related={[{ href: '/tools/timestamp', label: 'Timestamp converter' }, { href: '/tools/nbsp', label: 'Non-breaking spaces' }]}
+>
+  <Tool client:load />
+  <Fragment slot="doc">
+    <h2>Which encoding do I need?</h2>
+    <p>There are three, and mixing them up is the usual bug.</p>
+    <ul>
+      <li><strong>Component</strong> is <code>encodeURIComponent</code>: every reserved character is escaped. Use it for one value that goes inside a query string or a path segment.</li>
+      <li><strong>Form</strong> is what a browser sends for <code>application/x-www-form-urlencoded</code> and what <code>URLSearchParams</code> produces: like component, but a space becomes <code>+</code> and <code>! ' ( ) *</code> are escaped too.</li>
+      <li><strong>Full URL</strong> is <code>encodeURI</code>: it keeps <code>/ ? &amp; = #</code> so an entire URL stays a URL. It cannot be used for a single value, because <code>&amp;</code> inside the value would split it.</li>
+    </ul>
+    <h2>Examples</h2>
+    <pre>café &amp; crème        → component  caf%C3%A9%20%26%20cr%C3%A8me
+                    → form       caf%C3%A9+%26+cr%C3%A8me
+https://x.dev/?q=a b → full URL   https://x.dev/?q=a%20b</pre>
+    <h2>Why is my decoded text wrong?</h2>
+    <p>A <code>+</code> is a space only in form data. In a URL component it is a literal plus. Decoding picks automatically, and you can force either reading with the <em>Plus sign</em> option.</p>
+    <p>A malformed escape such as a lone <code>%</code> is shown as-is with a note, instead of failing the whole string.</p>
+  </Fragment>
+</ToolPage>

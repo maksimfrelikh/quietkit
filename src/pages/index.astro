@@ -1,0 +1,19 @@
+---
+import Base from '~/layouts/Base.astro';
+const tools = [
+  { href: '/tools/url-encode', title: 'URL encode / decode', desc: 'Percent-encoding in all three flavours, and a query-string parser.' },
+  { href: '/tools/timestamp', title: 'Timestamp converter', desc: 'Unix time in any unit to ISO 8601, RFC 2822, local time and back.' },
+  { href: '/tools/nbsp', title: 'Non-breaking spaces', desc: 'Glue short words, numbers, initials and dashes so lines never end with a hanging preposition.' },
+];
+---
+<Base title="quietkit" description="Small developer tools that run in your browser. No uploads, no accounts, no analytics — turn off the network and they still work.">
+  <div class="page-head">
+    <h1>Developer tools that stay on your machine</h1>
+    <p>Everything here runs in your browser. Nothing is uploaded, nothing is tracked.</p>
+  </div>
+  <ul class="tool-list">
+    {tools.map((t) => (
+      <li><a href={t.href}><span class="tool-list-title">{t.title}</span><span class="tool-list-desc">{t.desc}</span></a></li>
+    ))}
+  </ul>
+</Base>

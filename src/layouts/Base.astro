@@ -1,0 +1,70 @@
+---
+import '~/styles/fonts';
+// Kit first (base layer + palette), app.css refines. Order matters for the reset only.
+import 'stark-ui-kit/styles.css';
+import 'stark-ui-kit/theme-mono.css';
+import 'stark-ui-kit/prose.css';
+import 'stark-ui-kit/theme-toggle.css';
+import 'stark-ui-kit/controls.css';
+import 'stark-ui-kit/links.css';
+import 'stark-ui-kit/layout.css';
+import '~/styles/app.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Skip-link target. */
+  skipTarget?: string;
+}
+const { title, description, skipTarget = '#main' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const siteName = 'quietkit';
+const fullTitle = title === siteName ? siteName : `${title} — ${siteName}`;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  {/* Theme bootstrap, before first paint. Stored preference is dark | light; no key means
+      "system", and then data-theme is NOT set so the kit follows prefers-color-scheme.
+      Pinned by SHA-256 in deploy/nginx.conf — `npm run csp` keeps the two in step. */}
+  <script is:inline>(function(){try{const t=localStorage.getItem('quietkit_theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch{/* no storage: follow the OS */}})();</script>
+</head>
+<body>
+  <a href={skipTarget} class="skip-link">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="quietkit, home">quietkit</a>
+      <nav aria-label="Site">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+            <path d="M8 1.6 A6.4 6.4 0 0 1 8 14.4 Z" fill="currentColor"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap" tabindex="-1">
+    <slot />
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Everything on this page runs in your browser. Nothing is sent anywhere.</span>
+      <a href="https://github.com/maksimfrelikh/quietkit" class="ink-link">Source</a>
+    </div>
+  </footer>
+  <script src="~/scripts/site.ts"></script>
+</body>
+</html>

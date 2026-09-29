@@ -1,0 +1,28 @@
+---
+import ToolPage from '~/components/ToolPage.astro';
+import Tool from '~/tools/nbsp/Tool.svelte';
+---
+<ToolPage
+  title="Non-breaking spaces"
+  description="Insert non-breaking spaces where typography wants them: after short words, between a number and its unit, in initials, before a dash. Nothing dangles at a line end."
+  related={[{ href: '/tools/url-encode', label: 'URL encode / decode' }, { href: '/tools/timestamp', label: 'Timestamp converter' }]}
+>
+  <Tool client:load />
+  <Fragment slot="doc">
+    <h2>What gets glued</h2>
+    <ul>
+      <li><strong>Short words</strong> to the word after them: prepositions, conjunctions and articles, so a line never ends with “в”, “и”, “the” or “of”.</li>
+      <li><strong>Particles</strong> (же, ли, бы) to the word before them.</li>
+      <li><strong>Numbers</strong> to a short unit or word after them (5 kg, 2024 году, 30 %), and digit groups in 10 000.</li>
+      <li><strong>Initials and abbreviations</strong>: A. S. Pushkin, Mr. Baggins, стр. 12, и т. д.</li>
+      <li><strong>Dashes</strong>: the space before an em or en dash, so the dash never starts a line.</li>
+      <li>Optionally, <strong>the last two words</strong> of every paragraph, to avoid a single-word last line.</li>
+    </ul>
+    <h2>Character or <code>&amp;nbsp;</code>?</h2>
+    <p>The character (U+00A0) works anywhere plain text works: messengers, documents, CMS fields, code. Choose the entity when the result goes into raw HTML and you want the spaces visible in the markup.</p>
+    <h2>Running it twice</h2>
+    <p>Changes nothing. Only ordinary spaces are ever converted, and spaces that were already non-breaking are kept and shown in a lighter highlight. Text pasted from Word or a web page with its own <code>&amp;nbsp;</code> is understood.</p>
+    <h2>Which language?</h2>
+    <p>Detected from the script of the text: mostly Cyrillic means Russian rules, otherwise English. Set it explicitly for mixed text. The interface language does not matter.</p>
+  </Fragment>
+</ToolPage>
