@@ -10,7 +10,8 @@
 
   const mode = $derived((opts.value.mode === 'decode' ? 'decode' : 'encode') as Mode);
   const encoded = $derived(mode === 'encode' ? encodeAll(input) : null);
-  const decoded = $derived(mode === 'decode' ? decode(input, opts.value.plus as DecodeMode) : null);
+  const plus = $derived((['auto', 'form', 'component'].includes(opts.value.plus) ? opts.value.plus : 'auto') as DecodeMode);
+  const decoded = $derived(mode === 'decode' ? decode(input, plus) : null);
   const pairs = $derived(mode === 'decode' && input ? parseQuery(input) : null);
 
   const flavours = [

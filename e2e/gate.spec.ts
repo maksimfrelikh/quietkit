@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /* The value gate (docs/SPEC.md § 2.19). Screenshots are blind to a 1-step grey change and
    to a 2px radius; these snapshots are not. Three parts:

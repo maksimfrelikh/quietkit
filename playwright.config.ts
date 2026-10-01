@@ -42,8 +42,11 @@ export default defineConfig({
     { name: 'mobile-safari', testMatch: /tools\.spec/, use: { ...devices['iPhone 13'], deviceScaleFactor: 1 } },
     // Values: token, geometry and transition-state snapshots. Browser-independent, so once.
     { name: 'gate', testMatch: /gate\.spec/, use: { ...devices['Desktop Chrome'] } },
-    // Pixels: composition and layout, desktop and phone.
-    { name: 'visual-desktop', testMatch: /visual\.spec/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 900 } } },
-    { name: 'visual-mobile', testMatch: /visual\.spec/, use: { ...devices['iPhone 13'], deviceScaleFactor: 1 } },
+    // Pixels: composition and layout, desktop and phone. bypassCSP: toHaveScreenshot injects
+    // its own <style> (animations off, caret hidden) and WebKit refuses it under the page's
+    // CSP — a console error that is Playwright's, not ours. CSP behaviour is covered by the
+    // tools suite in all four browsers and by the gate.
+    { name: 'visual-desktop', testMatch: /visual\.spec/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 900 }, bypassCSP: true } },
+    { name: 'visual-mobile', testMatch: /visual\.spec/, use: { ...devices['iPhone 13'], deviceScaleFactor: 1, bypassCSP: true } },
   ],
 });

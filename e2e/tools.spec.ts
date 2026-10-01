@@ -1,27 +1,17 @@
-import { test, expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /* Smoke tests for the first three tools: the island hydrates under the real CSP, the
    result appears without a button, options land in the URL and the input never does.
-   Every test also fails on any console error — a CSP violation is a console error, and
-   nothing else would tell us about one in production. */
-
-const consoleErrors = async (page: Page) => {
-  const errors: string[] = [];
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  page.on('pageerror', (e) => errors.push(String(e)));
-  return errors;
-};
+   Every test also fails on any console error (e2e/fixtures.ts). */
 
 test('home lists the tools', async ({ page }) => {
-  const errors = await consoleErrors(page);
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('stay on your machine');
   await expect(page.getByRole('link', { name: /URL encode/ })).toBeVisible();
-  expect(errors).toEqual([]);
 });
 
 test('url-encode: live result, three flavours, URL keeps options but not input', async ({ page }) => {
-  const errors = await consoleErrors(page);
   await page.goto('/tools/url-encode');
   const input = page.getByLabel('Input');
   await expect(input).toBeFocused();
@@ -32,7 +22,6 @@ test('url-encode: live result, three flavours, URL keeps options but not input',
   await page.getByText('Decode', { exact: true }).click();
   await expect(page).toHaveURL(/\?mode=decode$/);
   await expect(page).not.toHaveURL(/input=/);
-  expect(errors).toEqual([]);
 });
 
 test('url-encode: deep link seeds the input and decodes a query string', async ({ page }) => {
@@ -44,7 +33,6 @@ test('url-encode: deep link seeds the input and decodes a query string', async (
 });
 
 test('timestamp: detects the unit and renders the table', async ({ page }) => {
-  const errors = await consoleErrors(page);
   await page.goto('/tools/timestamp');
   await page.getByLabel('Timestamp or date').fill('1790683200');
   await expect(page.getByRole('row', { name: /ISO 8601 UTC/ })).toContainText('2026-09-29T12:00:00.000Z');
@@ -52,7 +40,6 @@ test('timestamp: detects the unit and renders the table', async ({ page }) => {
   await page.getByLabel('Unit').selectOption('milliseconds');
   await expect(page.getByRole('row', { name: /ISO 8601 UTC/ })).toContainText('1970-01-21');
   await expect(page).toHaveURL(/\?unit=milliseconds$/);
-  expect(errors).toEqual([]);
 });
 
 const placeholderShown = (page: Page) => page.evaluate(() => {
@@ -72,7 +59,6 @@ for (const [tz, iso] of [['Asia/Tokyo', '2026-09-29T21:00:00+09:00'], ['UTC', '2
 }
 
 test('nbsp: highlights added spaces, entity mode, copy text is real', async ({ page }) => {
-  const errors = await consoleErrors(page);
   await page.goto('/tools/nbsp');
   expect(await placeholderShown(page)).toBe(true);
   await page.getByLabel('Input').fill('Мы пошли в лес и нашли 5 кг грибов');
@@ -85,7 +71,6 @@ test('nbsp: highlights added spaces, entity mode, copy text is real', async ({ p
   await page.getByLabel('Glue the last two words').check();
   await expect(page).toHaveURL(/out=entity&last=1$/);
   await expect(page.locator('.field-out mark')).toHaveCount(4);
-  expect(errors).toEqual([]);
 });
 
 test('theme toggle switches and persists without a flash', async ({ page }) => {

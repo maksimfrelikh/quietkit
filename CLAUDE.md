@@ -4,7 +4,7 @@ Small developer tools that run in the browser. The product and the architecture 
 `docs/SPEC.md` (Russian; the decisions log at its top is the short version). This file holds
 only what you need to work here without re-deriving it. Keep both true when the code moves.
 
-## What is here (as of 2026-09-29)
+## What is here (as of 2026-10-01)
 
 - Astro 6 in **static** output, Svelte 5 islands, **npm** (not pnpm — the kit's `prepare`
   build needs it; see SPEC § 2.1), `stark-ui-kit` pinned by sha in `package.json`.
@@ -36,7 +36,8 @@ only what you need to work here without re-deriving it. Keep both true when the 
 5. **Nothing the user typed or produced is stored** in the browser beyond the future handoff
    TTL. Only settings (`quietkit_theme`) in localStorage.
 6. **Every browser test fails on any console error** — that is how a CSP violation surfaces,
-   there is no analytics. Keep the `consoleErrors` pattern in new specs.
+   there is no analytics. `e2e/fixtures.ts` does it for every test: import `test` from there,
+   never from `@playwright/test` directly.
 
 ## CSP: how it is produced, how it breaks
 
@@ -60,8 +61,7 @@ Three Playwright suites, one Docker image (`scripts/e2e.sh`), all building `dist
 (the preview server serves the last build; before 2026-09-29 the config skipped the build and
 the gate stayed green through a real change):
 
-- `e2e/tools.spec.ts` — behaviour, in chromium / firefox / webkit / iPhone; fails on any
-  console error.
+- `e2e/tools.spec.ts` — behaviour, in chromium / firefox / webkit / iPhone.
 - `e2e/gate.spec.ts` — **values** (SPEC § 2.19): every custom property with its computed value
   per theme and contrast mode, the computed geometry of the tool-page components, and the two
   transition states a screenshot never sees (transitions zeroed during a theme switch, the
@@ -76,6 +76,8 @@ prove it again the same way if you ever doubt it.
 `e2e` runs inside `mcr.microsoft.com/playwright:v1.61.0-noble` (`scripts/e2e.sh`) so the
 rendering is identical on the Mac and on laptop-server; frelikh's host-rendered screenshot
 baselines only pass on the machine that made them, and this project must not repeat that.
+The container runs as the host user: as root it left root-owned files in `dist/`,
+`node_modules/.vite/deps` and the snapshots, and `astro check` on the host failed on them.
 `E2E_BASE_URL=https://quietkit.frelikh.dev npm run e2e` runs the same tests against the live
 site (no local server) — do it after every deploy; it is the production check of hydration
 and CSP. Docker must be running. Port **4330** for dev/preview/e2e: 4321 is the live frelikh service

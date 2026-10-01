@@ -64,9 +64,10 @@ main { padding-block: var(--tool-gap) var(--section-pad); }
 .page-head h1 { font-size: var(--t-h2); margin: 0 0 0.25em; line-height: 1.2; }
 .page-head p { margin: 0; color: var(--muted); }
 
-/* ---------- Tool: split I/O ----------
-   Duplicated per tool on purpose for the first three tools (docs/SPEC.md § 3.1 step 3);
-   the classes are shared so the shell can be lifted from them later. */
+/* ---------- Tool ----------
+   The classes behind src/ui/shell/ (Tool, IO, Pane, PaneHead, TextInput/TextOutput,
+   Options, Segmented, Checkbox, KeyValue). A tool's own one-off controls reuse them too
+   (timestamp's single-line .field.single). */
 .tool { display: grid; gap: var(--tool-gap); }
 .tool-io { display: grid; gap: var(--tool-gap); grid-template-columns: 1fr; }
 @media (min-width: 900px) { .tool-io { grid-template-columns: 1fr 1fr; } }
@@ -150,7 +151,7 @@ fieldset.opt { border: 0; padding: 0; margin: 0; }
 }
 .badge::before { content: ""; width: 0.5em; height: 0.5em; border-radius: var(--r-circle); background: var(--fg); }
 
-/* Result table (timestamp). */
+/* Key/value table: KeyValue in the shell (timestamp) and url-encode's query parameters. */
 .kv { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--t-body); }
 .kv th, .kv td { text-align: left; padding: 0.5rem 0.5rem 0.5rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 .kv th { font-family: var(--label-font); font-weight: var(--label-weight); font-size: var(--t-meta); letter-spacing: var(--label-track); text-transform: var(--label-case); color: var(--muted); white-space: nowrap; width: 1%; padding-inline-end: 1.25rem; }

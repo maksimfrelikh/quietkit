@@ -38,7 +38,9 @@ const fullTitle = title === siteName ? siteName : `${title} — ${siteName}`;
   <meta property="og:url" content={canonical} />
   {/* Theme bootstrap, before first paint. Stored preference is dark | light; no key means
       "system", and then data-theme is NOT set so the kit follows prefers-color-scheme.
-      Pinned by SHA-256 in deploy/nginx.conf — `npm run csp` keeps the two in step. */}
+      Hashed from this source in astro.config.mjs into the page's CSP meta; it must stay
+      the only inline script in this file, and this comment must not spell out its opening
+      tag — the config finds the script by that tag. `npm run csp` verifies the build. */}
   <script is:inline>(function(){try{const t=localStorage.getItem('quietkit_theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch{/* no storage: follow the OS */}})();</script>
 </head>
 <body>

@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /* Pixel gate: composition and layout, which values cannot express. Rendered inside the
    Playwright Docker image only (scripts/e2e.sh), so the baselines are the same file on

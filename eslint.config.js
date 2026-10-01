@@ -11,7 +11,9 @@ export default tseslint.config(
   ...svelte.configs['flat/recommended'],
   ...astro.configs.recommended,
   {
-    files: ['**/*.svelte'],
+    // Runes modules (*.svelte.ts) go through the Svelte parser too and need the TS parser
+    // inside it, or `export type` is a parsing error (seen 2026-10-01 on options.svelte.ts).
+    files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
     languageOptions: { parserOptions: { parser: tseslint.parser } },
   },
   {

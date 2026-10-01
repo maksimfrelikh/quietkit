@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 // pages afterwards. Structural directives that a <meta> CSP cannot carry (frame-ancestors)
 // live in deploy/nginx.conf.
 const base = readFileSync(fileURLToPath(new URL('./src/layouts/Base.astro', import.meta.url)), 'utf8');
-const inline = [...base.matchAll(/<script is:inline>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+// Anchored to a line start: a comment that merely mentions the tag mid-sentence must not
+// be hashed instead of the script (it happened on 2026-10-01; check-csp caught it).
+const inline = [...base.matchAll(/^\s*<script is:inline>([\s\S]*?)<\/script>/gm)].map((m) => m[1]);
 if (inline.length !== 1) throw new Error(`Base.astro must contain exactly one <script is:inline>, found ${inline.length}`);
 const bootstrapHash = `sha256-${createHash('sha256').update(inline[0]).digest('base64')}`;
 

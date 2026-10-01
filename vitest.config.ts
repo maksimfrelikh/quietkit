@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 // Engines are pure TS: tests run in Node with no DOM, on purpose. A test that needs a
-// browser API is a sign the code under test belongs in ui.svelte, not engine.ts.
+// browser API is a sign the code under test belongs in Tool.svelte, not engine.ts.
 export default defineConfig({
   test: {
     globals: true,
