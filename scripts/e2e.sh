@@ -10,7 +10,7 @@
 # writable for npx's cache; the image's browsers live in /ms-playwright, readable by anyone.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-IMAGE="mcr.microsoft.com/playwright:v1.61.0-noble"
+IMAGE="mcr.microsoft.com/playwright:v1.64.0-noble"
 exec docker run --rm --init --ipc=host \
   --user "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD":/work -w /work \

@@ -4,9 +4,9 @@ Small developer tools that run in the browser. The product and the architecture 
 `docs/SPEC.md` (Russian; the decisions log at its top is the short version). This file holds
 only what you need to work here without re-deriving it. Keep both true when the code moves.
 
-## What is here (as of 2026-10-01)
+## What is here (as of 2026-10-11)
 
-- Astro 6 in **static** output, Svelte 5 islands, **npm** (not pnpm — the kit's `prepare`
+- Astro 7 in **static** output, Svelte 5 islands, **npm** (not pnpm — the kit's `prepare`
   build needs it; see SPEC § 2.1), `stark-ui-kit` pinned by sha in `package.json`.
 - Three tools: `src/tools/url-encode`, `src/tools/timestamp`, `src/tools/nbsp`. Each is
   `engine.ts` (pure TS) + `engine.test.ts` + `Tool.svelte` + a page in `src/pages/tools/`.
@@ -73,7 +73,7 @@ Baselines are committed under `e2e/__snapshots__/`. The gate was proven to go re
 0.05rem change of `--field-pad` (tokens, geometry and 8 page shots) before its first commit;
 prove it again the same way if you ever doubt it.
 
-`e2e` runs inside `mcr.microsoft.com/playwright:v1.61.0-noble` (`scripts/e2e.sh`) so the
+`e2e` runs inside `mcr.microsoft.com/playwright:v1.64.0-noble` (`scripts/e2e.sh`) so the
 rendering is identical on the Mac and on laptop-server; frelikh's host-rendered screenshot
 baselines only pass on the machine that made them, and this project must not repeat that.
 The container runs as the host user: as root it left root-owned files in `dist/`,

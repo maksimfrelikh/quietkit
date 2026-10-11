@@ -27,6 +27,10 @@ export default defineConfig({
     // Keep every stylesheet an external <link>; inline <style> would need a hash per page.
     inlineStylesheets: 'never',
   },
+  // Astro 7 changed the default to 'jsx', which drops the whitespace between sibling tags. That
+  // whitespace is the gap between inline siblings (footer text and its link); keep the Astro 6
+  // behaviour so the pixel baselines under e2e/__snapshots__ stay valid.
+  compressHTML: true,
   markdown: { syntaxHighlight: false },
   security: {
     csp: {

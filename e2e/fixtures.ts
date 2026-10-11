@@ -5,10 +5,24 @@ import { test as base, expect } from '@playwright/test';
    production would otherwise go unnoticed. This is a fixture rather than a pattern copied
    into each test so that a new spec cannot forget it: import `test` from here, never
    from @playwright/test directly. */
+/* WebKit in Playwright 1.64 reports a style-src-attr CSP violation from Svelte's own feature
+   detection (svelte/src/internal/client/dom/elements/customizable-select.js sets
+   `select.innerHTML = '<option><span>t</span></option>'` on a detached element). Nothing of ours
+   is refused: the violation's sample is empty, the DOM has no style attribute, and the Astro 6
+   build of 2026-10-01 logs the same line under this WebKit while the 1.61 WebKit was silent.
+   Ignored by exact text and only in WebKit — chromium and firefox still fail on any inline-style
+   violation, and `npm run csp` rejects style attributes at build time. Seen 2026-10-11. */
+const WEBKIT_SVELTE_SELECT_NOISE =
+  "Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.";
+
 export const test = base.extend({
-  page: async ({ page }, use) => {
+  page: async ({ page, browserName }, use) => {
     const errors: string[] = [];
-    page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+    page.on('console', (m) => {
+      if (m.type() !== 'error') return;
+      if (browserName === 'webkit' && m.text() === WEBKIT_SVELTE_SELECT_NOISE) return;
+      errors.push(m.text());
+    });
     page.on('pageerror', (e) => errors.push(String(e)));
     await use(page);
     expect(errors, 'console errors during the test').toEqual([]);
