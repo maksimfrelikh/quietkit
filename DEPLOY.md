@@ -2,10 +2,15 @@
 
 Static site. `npm run build` writes `dist/`; nginx serves it straight from
 `/var/www/quietkit/dist`. No Node process, nothing to restart except nginx when its config
-changes. Host: laptop-server, `quietkit.frelikh.dev`, TLS from the existing `*.frelikh.dev`
-wildcard certificate.
+changes. Host: **netcup** (the owner's VPS) since 2026-10-17 — laptop-server before that;
+`quietkit.frelikh.dev`, TLS from the box's `*.frelikh.dev` wildcard certificate.
 
-## First-time setup (once, needs sudo)
+## First-time setup (once)
+
+On netcup everything runs as root, so the `sudo` prefixes below are no-ops and the clone is over
+https (`git clone https://github.com/maksimfrelikh/quietkit.git /var/www/quietkit`; `/root/.gitconfig`
+rewrites the `git+ssh` `stark-ui-kit` dependency to https, no SSH agent needed). The form below is
+the laptop-server one (a login user plus sudo):
 
 ```
 sudo -v \
