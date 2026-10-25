@@ -133,7 +133,10 @@ test('states: transitions are zeroed while the theme switches', async ({ page })
   expect(after).toBeDefined();
 });
 
-test('states: the tap highlight is ours and follows the theme', async ({ page }) => {
+test('states: the platform tap highlight is off and the press is the controls\' quiet :active', async ({ page }) => {
+  // stark-ui-kit 0.3.2: theme-mono.css sets --brand-tap-highlight: transparent, so the platform
+  // wash (~18% black over the whole tapped element) is gone in both themes, and the press is the
+  // controls' own `:active` — under (hover: none) .pill/.btn fill with the fg at 10%, instantly.
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto(PAGE);
   const read = () => page.evaluate(() => {
@@ -141,10 +144,20 @@ test('states: the tap highlight is ours and follows the theme', async ({ page })
     return { tap: cs.getPropertyValue('-webkit-tap-highlight-color'), fg: cs.getPropertyValue('--fg').trim() };
   });
   const light = await read();
-  expect(light.tap).not.toBe('');
-  expect(light.tap).not.toMatch(/rgba\(0, 0, 0, 0\.18\)/); // the platform default
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
   const dark = await read();
-  expect(dark.fg).not.toBe(light.fg);
-  expect(dark.tap).not.toBe(light.tap);
+  expect(dark.fg).not.toBe(light.fg); // the theme really switched
+  expect(light.tap).toBe('rgba(0, 0, 0, 0)');
+  expect(dark.tap).toBe('rgba(0, 0, 0, 0)');
+  const quietPress = await page.evaluate(() => {
+    const walk = (rules: CSSRuleList, touch: boolean): boolean =>
+      Array.from(rules).some((r) => {
+        if (r instanceof CSSMediaRule) return walk(r.cssRules, touch || /hover:\s*none/.test(r.conditionText));
+        return r instanceof CSSStyleRule && touch && /\.pill:active/.test(r.selectorText) && r.cssText.includes('color-mix');
+      });
+    return Array.from(document.styleSheets).some((s) => {
+      try { return walk(s.cssRules, false); } catch { return false; }
+    });
+  });
+  expect(quietPress).toBe(true);
 });

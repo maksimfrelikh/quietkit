@@ -51,10 +51,6 @@ CSP; use `npm run build:nocheck && npm run preview` to test it.
 
 ## Gates
 
-`astro` (7.4.1) and `@astrojs/svelte` (9.1.0) are pinned exactly: the next patches (7.4.2, 9.1.1)
-raised their Node floor to 22.23.4 and both hosts run Ubuntu's `nodejs` 22.22.1, on which `astro check` /
-`astro build` refuse to start. Bump the pins only after the hosts' Node is ≥ 22.23.4.
-
 ```
 npm run verify       # astro check → eslint → vitest → build → check-csp
 npm run e2e          # Playwright in Docker: builds, then serves dist/ with `astro preview`

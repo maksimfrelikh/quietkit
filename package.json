@@ -20,10 +20,10 @@
     "e2e:update": "scripts/e2e.sh --update-snapshots"
   },
   "dependencies": {
-    "@astrojs/svelte": "9.1.0",
+    "@astrojs/svelte": "^9.1.1",
     "@fontsource-variable/archivo": "^5.2.8",
     "@fontsource/ibm-plex-mono": "^5.3.0",
-    "astro": "7.4.1",
+    "astro": "^7.4.2",
     "stark-ui-kit": "github:maksimfrelikh/stark-ui-kit#v0.3.2",
     "svelte": "^5.57.2"
   },
@@ -42,5 +42,8 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "allowScripts": {
+    "github:maksimfrelikh/stark-ui-kit#e08697faa19c9c5b3899cc6ecb3657cf82162ea6": true
   }
 }

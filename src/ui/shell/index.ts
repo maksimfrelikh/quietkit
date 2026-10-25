@@ -13,5 +13,5 @@ export { default as KeyValue } from './KeyValue.svelte';
 export { default as Segmented } from './Segmented.svelte';
 export { default as SelectOption } from './SelectOption.svelte';
 export { default as Checkbox } from './Checkbox.svelte';
-export { urlOptions, seededInput } from './options.svelte';
+export { urlOptions, seededInput } from './shellOptions.svelte';
 export { useStatus } from './status';
