@@ -73,15 +73,15 @@ Baselines are committed under `e2e/__snapshots__/`. The gate was proven to go re
 0.05rem change of `--field-pad` (tokens, geometry and 8 page shots) before its first commit;
 prove it again the same way if you ever doubt it.
 
-`e2e` runs inside `mcr.microsoft.com/playwright:v1.64.0-noble` (`scripts/e2e.sh`) so the
-rendering is identical on the Mac and on laptop-server; frelikh's host-rendered screenshot
+`e2e` runs inside the Playwright Docker image pinned in `scripts/e2e.sh` (`IMAGE=`, the same
+version as `@playwright/test`) so the rendering is identical on the Mac and on laptop-server; frelikh's host-rendered screenshot
 baselines only pass on the machine that made them, and this project must not repeat that.
 The container runs as the host user: as root it left root-owned files in `dist/`,
 `node_modules/.vite/deps` and the snapshots, and `astro check` on the host failed on them.
 `E2E_BASE_URL=https://quietkit.frelikh.dev npm run e2e` runs the same tests against the live
 site (no local server) — do it after every deploy; it is the production check of hydration
-and CSP. Docker must be running. Port **4330** for dev/preview/e2e: 4321 is the live frelikh service
-on laptop-server.
+and CSP. Docker must be running. Port **4330** for dev/preview/e2e: 4321 is frelikh's (its
+`astro dev` and its a11y suite run there on both dev machines).
 
 ## Theme
 
@@ -108,7 +108,7 @@ docs/SPEC.md                 product + architecture; decisions log at the top
 ## Two machines
 
 Dev clones: `~/projects/quietkit` on the owner's Mac and on laptop-server; prod checkout
-`/var/www/quietkit` on laptop-server, updated only by the deploy. Sync only through GitHub
+`/var/www/quietkit` on netcup (since 2026-10-17, see `DEPLOY.md`), updated only by the deploy. Sync only through GitHub
 `main`: `git pull --ff-only` before editing. The kit is fetched over `git+ssh`; in a
 non-interactive shell on laptop-server set `SSH_AUTH_SOCK=/run/user/1000/ssh-tpm-agent.sock`
 before `npm ci`.
