@@ -24,7 +24,7 @@
     "@fontsource-variable/archivo": "^5.2.8",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "astro": "^7.4.2",
-    "stark-ui-kit": "github:maksimfrelikh/stark-ui-kit#v0.3.2",
+    "stark-ui-kit": "github:maksimfrelikh/stark-ui-kit#v0.3.3",
     "svelte": "^5.57.2"
   },
   "devDependencies": {
@@ -44,6 +44,6 @@
     "node": ">=20.0.0"
   },
   "allowScripts": {
-    "github:maksimfrelikh/stark-ui-kit#e08697faa19c9c5b3899cc6ecb3657cf82162ea6": true
+    "github:maksimfrelikh/stark-ui-kit#ca9d14d03a67706c76f8091ec767fa2e768d44a9": true
   }
 }
