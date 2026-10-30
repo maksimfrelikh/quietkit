@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 
 /* Every browser test fails on any console error or uncaught exception. There is no
    analytics, so a CSP violation (which is a console error) or a hydration failure in
@@ -28,5 +28,15 @@ export const test = base.extend({
     expect(errors, 'console errors during the test').toEqual([]);
   },
 });
+
+/* Islands hydrate once their chunks arrive, and the input pane focuses itself on mount
+   (TextInput's autofocus). Against the live site that can land after a test has already
+   blurred or measured the page, so the value and pixel gates wait for every island first:
+   Astro drops `ssr` from an <astro-island> after its component has rendered. Seen 2026-10-30:
+   two runs against quietkit.frelikh.dev failed 7 and 6 shots or geometries, a different set
+   each time (the focus ring, output marks not rendered yet), on files that passed 66/66 locally. */
+export async function hydrated(page: Page) {
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+}
 
 export { expect };

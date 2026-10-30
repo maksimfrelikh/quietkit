@@ -1,5 +1,5 @@
 import { type Page } from '@playwright/test';
-import { test, expect } from './fixtures';
+import { test, expect, hydrated } from './fixtures';
 
 /* The value gate (docs/SPEC.md § 2.19). Screenshots are blind to a 1-step grey change and
    to a 2px radius; these snapshots are not. Three parts:
@@ -86,6 +86,7 @@ for (const scheme of ['light', 'dark'] as const) {
   test(`geometry: ${scheme}`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme });
     await page.goto(PAGE);
+    await hydrated(page);
     await page.evaluate(() => document.fonts.ready);
     expect(json(await geometry(page))).toMatchSnapshot(`geometry-${scheme}.json`);
   });

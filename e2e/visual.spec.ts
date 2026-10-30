@@ -1,5 +1,5 @@
 import { type Page } from '@playwright/test';
-import { test, expect } from './fixtures';
+import { test, expect, hydrated } from './fixtures';
 
 /* Pixel gate: composition and layout, which values cannot express. Rendered inside the
    Playwright Docker image only (scripts/e2e.sh), so the baselines are the same file on
@@ -16,6 +16,7 @@ const pages: [string, string][] = [
 ];
 
 async function settle(page: Page) {
+  await hydrated(page);
   await page.evaluate(() => document.fonts.ready);
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
 }
