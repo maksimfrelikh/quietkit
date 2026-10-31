@@ -52,10 +52,15 @@ CSP; use `npm run build:nocheck && npm run preview` to test it.
 ## Gates
 
 ```
-npm run verify       # astro check → eslint → vitest → build → check-csp
+npm run verify       # astro check → tsc → eslint → vitest → build → check-csp
 npm run e2e          # Playwright in Docker: builds, then serves dist/ with `astro preview`
 npm run e2e:update   # same, rewriting the snapshots — read the diff first
 ```
+
+TypeScript is in transition, as in hushsend: `tsc` comes from `@typescript/native` (an npm alias of
+`typescript@7`, the native compiler), while the package named `typescript` is
+`@typescript/typescript6`, the 6.0 build that `astro check` and typescript-eslint load, because
+TypeScript 7.0 ships no programmatic API. When both accept the 7.1 API, collapse into `typescript@^7`.
 
 Three Playwright suites, one Docker image (`scripts/e2e.sh`), all building `dist/` first
 (the preview server serves the last build; before 2026-09-29 the config skipped the build and
